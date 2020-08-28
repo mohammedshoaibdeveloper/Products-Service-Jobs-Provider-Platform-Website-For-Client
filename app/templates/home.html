@@ -1,0 +1,468 @@
+{% extends 'master.html' %} {% load static %} {% block body %}
+
+<!-- banner part start-->
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} mb-0 alert-dismissible fade show" role="alert">
+    <strong>Message:</strong> {{message}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
+<section class="banner_part">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <div class="banner_slider">
+                    <div class="single_banner_slider">
+                        <div class="banner_text">
+                            <div class="banner_text_iner">
+                                <h5>Winter Fasion</h5>
+                                <h1>Fashion Collection 2020</h1>
+                                <a href="allproduct" class="btn_1">shop now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- banner part start-->
+<section>
+    <!-- feature_part start-->
+    <div class="container">
+    <div class="myslider">
+        <!-- <section class="col-md-12 col-sm-12"> -->
+            <div class="row slider-header">
+                <div class="col-md-8 my-3">
+                    <h1 class="slider-h1 header-caption">Products</h1>
+                </div>
+                <div class="col-md-4 col-sm-4  header-caption pull-md-right">
+                    <div class="slider-btn">
+                        <i class="fas fa-caret-left slider-arrow " id="slider-left"></i>
+                        <i class="fas fa-caret-right slider-arrow " id="slider-right"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-wrap">
+                <div class="owl-carousel">
+                    {% for i in product|slice:"0:6" %}
+                    <div class="item ">
+                        <a href="/product/{{i.pid}}">
+                            <figure class="cap-bot">
+                                <img src="/uploads/{{i.image}}" alt="" class="slider-img">
+                                <figcaption>
+                                    {{i.name}} <br> ${{i.price}}
+                                </figcaption>
+                            </figcaption>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        <!-- </section> -->
+    </div>
+</div>
+    <!-- upcoming_event part start-->
+
+    <!-- new arrival part here -->
+    <section class="new_arrival section_padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 my-3">
+                    <!-- <div class="arrival_tittle"> -->
+                        <h1 class="slider-h1 header-caption">new arrival</h1>
+                    <!-- </div> -->
+                </div>
+
+            </div>
+        </div>
+        <!-- SLide For Products -->
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="new_arrival_iner ">
+                        <div class="float-left">
+                            {% for productArrivel in product|slice:"7:" %}
+                            <div class="col-md-3 col-sm-6 float-left">
+                                <div class="single_arrivel_item">
+                                    <img src="/uploads/{{productArrivel.image}}" alt="#" class="arrivel-img">
+                                    <div class="hover_text">
+
+                                        <a href="/product/{{productArrivel.pid}}">
+                                            <h5>{{productArrivel.name}}</h5>
+                                        </a>
+
+                                        <h5>${{productArrivel.price}}</h5>
+                                        <div class="social_icon">
+                                            <a href="#"><i class="ti-heart"></i></a>
+                                            <a href="/addtocart/{{productArrivel.pid}}"><i class="ti-bag"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                        <div class="col text-center">
+                            <a href="/allproduct" class="btn btn_1 pull-5">All Products</a>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+
+            </div>
+        </div>
+        <!-- End Product Slider -->
+        <div class="container">
+            <section class="col-md-12 col-sm-12 myslider">
+                <div class="row slider-header">
+                    <div class="col-md-12">
+                        <h1 class="slider-h1 header-caption">Services</h1>
+                    </div>
+                    <div class="col-md-8">
+                        <h2 class="slider-h1 header-caption my-3">Daily Services</h2>
+                    </div>
+                    <div class="col-md-4 col-sm-4  header-caption pull-right">
+                        <div class="slider-btn">
+                            <i class="fas fa-caret-left slider-arrow " id="slider-left"></i>
+                            <i class="fas fa-caret-right slider-arrow " id="slider-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="carousel-wrap">
+                    <div class="owl-carousel">
+                        {% for i in service1|slice:"0:6" %}
+
+
+                        <div class="item ">
+                            <a href="/serviceview/{{i.Service_id}}">
+                                <figure class="cap-bot">
+                                    <img src="/uploads/{{i.Service_Image}}" alt="" class="slider-img">
+                                    <figcaption>
+                                        {{i.Service_Name}}
+
+                                    </figcaption>
+                            </a>
+                        </div>
+
+                        {% endfor %}
+
+
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container">
+            <section class="col-md-12 col-sm-12 myslider">
+                <div class="row slider-header">
+                    <div class="col-md-8" col-sm-8>
+                        <!-- <h1 class="slider-h1 header-caption">Services</h1><br><br> -->
+                        <h2 class="slider-h1 header-caption my-3">Monthly Services</h2>
+
+                    </div>
+                    <div class="col-md-4 col-sm-4  header-caption pull-right">
+                        <div class="slider-btn">
+                            <i class="fas fa-caret-left slider-arrow " id="slider-left"></i>
+                            <i class="fas fa-caret-right slider-arrow " id="slider-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="carousel-wrap">
+                    <div class="owl-carousel">
+                        {% for i in service2|slice:"0:6" %}
+
+
+                        <div class="item ">
+                            <a href="/serviceview/{{i.Service_id}}">
+                                <figure class="cap-bot">
+                                    <img src="/uploads/{{i.Service_Image}}" alt="" class="slider-img">
+                                    <figcaption>
+                                        {{i.Service_Name}}
+
+                                    </figcaption>
+                            </a>
+                        </div>
+
+                        {% endfor %}
+
+
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container">
+            <section class="col-md-12 col-sm-12 myslider">
+                <div class="row slider-header">
+                    <div class="col-md-8" col-sm-8>
+
+                        <h2 class="slider-h1 header-caption my-3">Yearly Services</h2>
+
+                    </div>
+                    <div class="col-md-4 col-sm-4  header-caption pull-right">
+                        <div class="slider-btn">
+                            <i class="fas fa-caret-left slider-arrow " id="slider-left"></i>
+                            <i class="fas fa-caret-right slider-arrow " id="slider-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="carousel-wrap">
+                    <div class="owl-carousel">
+                        {% for i in service3|slice:"0:6" %}
+
+
+                        <div class="item ">
+                            <a href="/serviceview/{{i.Service_id}}">
+                                <figure class="cap-bot">
+                                    <img src="/uploads/{{i.Service_Image}}" alt="" class="slider-img">
+                                    <figcaption>
+                                        {{i.Service_Name}}
+                                    </figcaption>
+                            </a>
+                        </div>
+
+                        {% endfor %}
+
+
+                    </div><br><br>
+                    <div class="col text-center">
+                        <a href="allservices" class="btn btn_1 pull-5">All Services</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="container">
+            <section class="col-md-12 col-sm-12 myslider">
+                <div class="row slider-header">
+                    <div class="col-md-12">
+                        <h1 class="slider-h1 header-caption">Jobs</h1>
+                    </div>
+                    <div class="col-md-8">
+                        <h2 class="slider-h1 header-caption my-3">High Paid Jobs</h2>
+                    </div>
+                    <div class="col-md-4 col-sm-4  header-caption pull-right">
+                        <div class="slider-btn">
+                            <i class="fas fa-caret-left slider-arrow " id="slider-left"></i>
+                            <i class="fas fa-caret-right slider-arrow " id="slider-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="carousel-wrap">
+                    <div class="owl-carousel">
+                        {% for i in job1|slice:"0:6" %}
+
+
+                        <div class="item ">
+                            <a href="/jobview/{{i.Job_id}}">
+                                <figure class="cap-bot">
+                                    <img src="/uploads/{{i.Job_Image}}" alt="" class="slider-img">
+                                    <figcaption>
+                                        {{i.Job_Name}}
+
+                                    </figcaption>
+                            </a>
+                        </div>
+
+                        {% endfor %}
+
+
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container">
+            <section class="col-md-12 col-sm-12 myslider">
+                <div class="row slider-header">
+                    <div class="col-md-8" col-sm-8>
+                        <!-- <h1 class="slider-h1 header-caption">Services</h1><br><br> -->
+                        <h2 class="slider-h1 header-caption my-3">Recent Jobs</h2>
+
+                    </div>
+                    <div class="col-md-4 col-sm-4  header-caption pull-right">
+                        <div class="slider-btn">
+                            <i class="fas fa-caret-left slider-arrow " id="slider-left"></i>
+                            <i class="fas fa-caret-right slider-arrow " id="slider-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="carousel-wrap">
+                    <div class="owl-carousel">
+                        {% for i in job2|slice:"0:6" %}
+
+
+                        <div class="item ">
+                            <a href="/jobview/{{i.Job_id}}">
+                                <figure class="cap-bot">
+                                    <img src="/uploads/{{i.Job_Image}}" alt="" class="slider-img">
+                                    <figcaption>
+                                        {{i.Job_Name}}
+
+                                    </figcaption>
+                            </a>
+                        </div>
+
+                        {% endfor %}
+
+
+
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container">
+            <section class="col-md-12 col-sm-12 myslider">
+                <div class="row slider-header">
+                    <div class="col-md-8" col-sm-8>
+
+                        <h2 class="slider-h1 header-caption my-3">Part time Jobs</h2>
+
+                    </div>
+                    <div class="col-md-4 col-sm-4  header-caption pull-right">
+                        <div class="slider-btn">
+                            <i class="fas fa-caret-left slider-arrow " id="slider-left"></i>
+                            <i class="fas fa-caret-right slider-arrow " id="slider-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="carousel-wrap">
+                    <div class="owl-carousel">
+                        {% for i in jobview|slice:"0:6" %}
+
+
+                        <div class="item ">
+                            <a href="/product/{{i.Job_id}}">
+                                <figure class="cap-bot">
+                                    <img src="/uploads/{{i.Job_Image}}" alt="" class="slider-img">
+                                    <figcaption>
+                                        {{i.Job_Name}}
+
+                                    </figcaption>
+                            </a>
+                        </div>
+
+                        {% endfor %}
+
+
+
+                    </div><br><br>
+                    <div class="col text-center">
+                        <a href="alljob" class="btn btn_1 pull-5">All Jobs</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </section>
+    <!-- new arrival part end -->
+
+    <!-- free shipping here -->
+    <section class="shipping_details section_padding">
+        <div class="container py-4 mt-5">
+            <div class="row">
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single_shopping_details">
+                        <img src="{% static ''%}img/icon/icon_1.png" alt="">
+                        <h4>Free shipping</h4>
+                        <p>Divided face for bearing the divide unto seed winged divided light Forth.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single_shopping_details">
+                        <img src="{% static ''%}img/icon/icon_2.png" alt="">
+                        <h4>Free shipping</h4>
+                        <p>Divided face for bearing the divide unto seed winged divided light Forth.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single_shopping_details">
+                        <img src="{% static ''%}img/icon/icon_3.png" alt="">
+                        <h4>Free shipping</h4>
+                        <p>Divided face for bearing the divide unto seed winged divided light Forth.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="single_shopping_details">
+                        <img src="{% static ''%}img/icon/icon_4.png" alt="">
+                        <h4>Free shipping</h4>
+                        <p>Divided face for bearing the divide unto seed winged divided light Forth.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- free shipping end -->
+
+    <!-- subscribe_area part start-->
+    <!-- <section class="instagram_photo">
+        <div class="container-fluid>
+            <div class=" row ">
+                <div class="col-lg-12 ">
+                    <div class="instagram_photo_iner ">
+                        <div class="single_instgram_photo ">
+                            <img src="{% static ''%}img/instagram/inst_1.png " alt=" ">
+                            <a href="# "><i class="ti-instagram "></i></a> 
+                        </div>
+                        <div class="single_instgram_photo ">
+                            <img src="{% static ''%}img/instagram/inst_2.png " alt=" ">
+                            <a href="# "><i class="ti-instagram "></i></a> 
+                        </div>
+                        <div class="single_instgram_photo ">
+                            <img src="{% static ''%}img/instagram/inst_3.png " alt=" ">
+                            <a href="# "><i class="ti-instagram "></i></a> 
+                        </div>
+                        <div class="single_instgram_photo ">
+                            <img src="{% static ''%}img/instagram/inst_4.png " alt=" ">
+                            <a href="# "><i class="ti-instagram "></i></a> 
+                        </div>
+                        <div class="single_instgram_photo ">
+                            <img src="{% static ''%}img/instagram/inst_5.png " alt=" ">
+                            <a href="# "><i class="ti-instagram "></i></a> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+       
+   
+    </section> -->
+    <!--::subscribe_area part end::-->
+
+</section>
+
+{% endblock %} {% block script %}
+
+<script>
+    { %
+        if Thank %
+    }
+    alert('{{msg}}')
+    window.location.href = "/ ";
+
+    { % endif %
+    }
+</script>
+<script>
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>
+
+{% endblock script %}
