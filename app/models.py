@@ -141,6 +141,7 @@ class User_Signup(models.Model):
     email = models.CharField(max_length=50)
     password=models.CharField(max_length=100)
     Whatsapp_No=models.CharField(max_length=120,default="0")
+    Contact_No=models.CharField(max_length=120,default="0")
     Location=models.CharField(max_length=100,default="location" )
 
 

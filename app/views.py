@@ -232,7 +232,7 @@ def categories(request,cid):
 #     cart.products.remove(cartid)
 #     return redirect('/cart')
 
-# Checkout view
+# Checkout vie
 def checkout(request,id):
     try:
     
@@ -293,54 +293,63 @@ def signup(request):
             fname=request.POST['fname']
             lname=request.POST['lname']
             email=request.POST['email']
+            Whatsapp_No=request.POST['Whatsapp_No']
+            Contact_No=request.POST['Contact_No']
+            Location=request.POST['Location']
             password=request.POST['password']
+            checkEmailRepeat = User_Signup.objects.filter(email = email)
+            if checkEmailRepeat:
+                messages.error(request,"Email Already Exist")
+                return redirect('signup')
+            checkcontact=User_Signup.objects.filter(Contact_No = Contact_No)
+            if checkcontact:
+                messages.error(request,"Contact Number Already Exist")
+                return redirect('signup')
                 
-            data = User_Signup(fname=fname,lname=lname,email=email,password=password)
+            data = User_Signup(fname=fname,lname=lname,email=email,password=password,Whatsapp_No=Whatsapp_No,Contact_No=Contact_No,Location=Location)
             data.save()
-            message = "Your Account is Sucessfully created"
+            messages.success(request,"Account Created Successfully")
+            return redirect('login') 
+
             userdata=User_Signup.objects.get(email=email)
             myid=userdata.sno
         
-            mydata=Cart(user_id=myid)
-            mydata.save()
-            messages.success(request,"Account Created Successfully")
-            return render(request,'login.html')  
-            # return render(request,'isgnup.html')
+            # mydata=Cart(user_id=myid)
+            # mydata.save()
+             
+            
         navdata=category.objects.all() 
         return render(request,'signup.html',{'navbar':navdata})
     except:
         return redirect('/')
 
 def login(request):
-    try:
-        if request.method == 'POST':
+    # try:
+    if request.method == 'POST':
             
-            email=request.POST['email']
-            password=request.POST['password']
-            data = User_Signup.objects.filter(email=email,password=password)
-            if data:
-            
-                userdata= User_Signup.objects.get(email=email)
-                request.session['userid']=userdata.sno
+        email=request.POST['email']
+        password=request.POST['password']
+        data = User_Signup.objects.get(Q(email = email) | Q(Contact_No = email))
+      
+        if data:
+            if data.password == password:
+                request.session['userid']=data.sno
                 request.session['is_loged'] = True
-                # cartdata=Cart.objects.get(user_id=userdata.sno)
-                # request.session['usercart']=cartdata.id
-                # cartcount=Cart.objects.filter(id= request.session['usercart'])[0]
-                # request.session['counter']= cartcount.products.count()
                 messages.success(request,"Login Successfully")
                 return redirect('/')
-                
-                
             else:
-                messages.error(request,"your detail is wrong check your name or a password")
-                
+                messages.error(request,"Password is Incorrect")
                 return render(request,'login.html')
+        
+        else:
+            messages.error(request,"your detail is wrong check your name or a password")
+            return render(request,'login.html')
 
     
-        navdata=category.objects.all()  
-        return render(request,'login.html',{'navbar':navdata})
-    except:
-        return redirect('/')
+    navdata=category.objects.all()  
+    return render(request,'login.html',{'navbar':navdata})
+    # except:
+    #     return redirect('/')
 
 def logout(request):
     try:
@@ -388,6 +397,8 @@ def charge(request):
     try:
         if request.method == 'POST':
             x=int(request.POST['amount'])
+           
+            
             
             charge = stripe.Charge.create(
             amount=x*100,
@@ -597,7 +608,7 @@ def serviceprovideraccount(request):
         checkEmailRepeat = Company_Account.objects.filter(Company_Account_Email = Company_Account_Email)
         if checkEmailRepeat:
             messages.error(request,"Email Already Exist")
-            return redirect('password')
+            return redirect('serviceprovideraccount')
         
         data=Company_Account(Company_Account_Name=Company_Account_Name,Company_Account_Email=Company_Account_Email,password=password,Company_Account_logo=Company_Account_logo,Company_Account_Desc=Company_Account_Desc,Contact=Contact,Company_Adress=Company_Adress,Company_Whatsapp_No=Company_Whatsapp_No,Company_Location=Company_Location,Service_Category=Service_Category)
         data.save()

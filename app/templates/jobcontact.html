@@ -1,6 +1,6 @@
 {% extends 'master.html' %} {% load static %} {% block body %}
 <div class="container  align-self-center">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <h1>Job Contact</h1><br>
         <form action="/jobcontact/{{id.Job_id}}" method="POST">
             {% csrf_token %}
@@ -28,7 +28,9 @@
             <textarea rows="2" name="Desc" class="form-control" placeholder="Desciption" required></textarea>
             <br>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary col-md-12" ">Submit</button>
+            <br>
+            <br>
             <br>
         </form>
     </div>

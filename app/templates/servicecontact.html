@@ -1,6 +1,6 @@
 {% extends 'master.html' %} {% load static %} {% block body %}
 <div class="container  align-self-center">
-    <div class="col-md-6">
+    <div class="col-md-12">
         {% for message in messages %}
         <div class="alert alert-{{message.tags}} mb-0 alert-dismissible fade show" role="alert">
             <strong>Message:</strong> {{message}}
@@ -38,7 +38,9 @@
 
             <br>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary col-md-12" ">Submit</button>
+            <br>
+            <br>
             <br>
         </form>
     </div>
