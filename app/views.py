@@ -8,6 +8,8 @@ import time
 import json
 import xlwt
 from django.db.models import Q
+from forex_python.converter import CurrencyRates,CurrencyCodes
+import requests
 # Create your views here.
 stripe.api_key='sk_test_SD1VLYLcME6RYimXA3xxNKXW00eXfNnzuC'
 # Create your views here.
@@ -232,50 +234,68 @@ def categories(request,cid):
 #     cart.products.remove(cartid)
 #     return redirect('/cart')
 
-# Checkout vie
 def checkout(request,id):
-    try:
     
-        if request.method=="POST":
-            
-            x=int(request.POST['totalamount'])
-            # return HttpResponse(x)
-            
-            charge = stripe.Charge.create(
-            amount=x*100,
-            currency='usd',
-            description='A Django charge',
-            source=request.POST['stripeToken']
-            )
-            if(charge['paid']==True):
-
-                
-                Firstname=request.POST['Firstname']
-                lastname=request.POST['lastname']
-                phoneno=request.POST['phoneno']
-                emailid=request.POST['emailid']
-                address=request.POST['address']
-                city=request.POST['city']
-                district=request.POST['district']
-                zipcode=request.POST['zipcode']
-                id=User_Signup.objects.get(sno=request.session['userid'])
-                tokenid=request.POST['stripeToken']
-                totalamount=request.POST['totalamount']
-                Product_Quantity=request.POST['Product_Quantity']
-                companyid=Company_Account.objects.get(Company_Account_id=request.POST['Company_Account'])
-                productid=product.objects.get(pid=request.POST['productid'])
-                orderdata=Order(Firstname=Firstname,lastname=lastname,phoneno=phoneno,emailid=emailid,address=address,city=city,district=district,zipcode=zipcode,User_Id=id,tokenid=tokenid,totalamount=totalamount,Product_Quantity=Product_Quantity,Company_Account_Id=companyid,Product_id=productid)
-                
-                orderdata.save()
-                messages.success(request,"Item Payment Successfully")
-                return redirect('/')
-                
-                
+    if request.method=="POST":
         
+        x=int(request.POST['totalamount'])
+        api_key = '8DWA22DVZO227X94'
+        from_c = 'USD'
+        to_c = 'PKR'
+        base_url = 'https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE'
+        main_url = base_url + '&from_currency=' + from_c + '&to_currency=' + to_c + '&apikey=' + api_key
+        response = requests.get(main_url)
+        result = response.json()
+        key = result['Realtime Currency Exchange Rate']
+        rate = key['5. Exchange Rate']
+        rate = float(rate)
+        x = x / rate
+        print(x)
+        x = x*100
+        x = int(x)
+        
+    
+        charge = stripe.Charge.create(
+        amount=x,
+        currency='usd',
+        description='A Django charge',
+        source=request.POST['stripeToken']
+        )
+
+      
+        if(charge['paid']==True):
+
+            
+            Firstname=request.POST['Firstname']
+            lastname=request.POST['lastname']
+            phoneno=request.POST['phoneno']
+            emailid=request.POST['emailid']
+            address=request.POST['address']
+            city=request.POST['city']
+            district=request.POST['district']
+            zipcode=request.POST['zipcode']
+            
+            id=User_Signup.objects.get(sno=request.session['userid'])
+           
+            tokenid=request.POST['stripeToken']
+            totalamount=request.POST['totalamount']
+            Product_Quantity=request.POST['Product_Quantity']
+            companyid=Company_Account.objects.get(Company_Account_id=request.POST['Company_Account'])
+            productid=product.objects.get(pid=request.POST['productid'])
+            orderdata=Order(Firstname=Firstname,lastname=lastname,phoneno=phoneno,emailid=emailid,address=address,city=city,district=district,zipcode=zipcode,User_Id=id,tokenid=tokenid,totalamount=totalamount,Product_Quantity=Product_Quantity,Company_Account_Id=companyid,Product_id=productid)
+            
+            orderdata.save()
+            messages.success(request,"Item Payment Successfully")
+            return redirect('/')
+            
+            
+    try:
+        id=User_Signup.objects.get(sno=request.session['userid'])
+            
         quantity=request.GET['quantity']
         pquantity=float(quantity)
         productdata=product.objects.get(pid=id)
-    
+
         pamount=productdata.price
         convert=float(pamount)
         producttotal=pquantity*convert
@@ -283,8 +303,12 @@ def checkout(request,id):
         
         navdata=category.objects.all() 
         return render(request,'checkout.html',{'navbar':navdata,'quantity':quantity,'data':productdata,'finalamount':finalamount,'quantity':quantity})
+
+
     except:
-        return redirect('/')
+        
+        messages.error(request,"Please Login first before checkout")
+        return redirect('/login')
 # Signup page
 def signup(request):
     try:
@@ -359,7 +383,7 @@ def logout(request):
             # del request.session['counter']
             messages.success(request,"you are Sucessfully Logout")
             
-            return render(request,'home.html')
+            return redirect('/')
 
         else:
             
