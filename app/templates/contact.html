@@ -1,5 +1,14 @@
 {% extends 'master.html' %} {% load static %} {% block title %} My Awesome Contact {% endblock %} {% block body %}
-
+ <style>
+     
+@media (max-width: 576px) {
+    /* line 59, /Applications/MAMP/htdocs/palash/cl/august 2019/202. Shop/202 shop html/sass/_new_arrival.scss */
+   
+  .map-mobile{
+    display: none !important;
+  }
+}
+ </style>
 <!--================Home Banner Area =================-->
 <!-- breadcrumb start-->
 <section class="breadcrumb breadcrumb_bg">
@@ -29,7 +38,7 @@
 <!-- ================ contact section start ================= -->
 <section class="contact-section padding_top">
     <div class="container">
-        <div class="col-md-8 col-sm-8">
+        <div class="col-md-8 col-sm-8 map-mobile" >
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.096992105118!2d55.27121641494783!3d25.199951383895023!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f428115059891%3A0x1b1534ae8f6a35f0!2sBoulevard%20Plaza%20-%20Downtown%20Dubai%20-%20Dubai%20-%20United%20Arab%20Emirates!5e0!3m2!1sen!2s!4v1598620356435!5m2!1sen!2s"
                 frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0" width="1000px" height="500px"></iframe>
 
