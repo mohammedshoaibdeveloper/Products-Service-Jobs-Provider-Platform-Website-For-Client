@@ -241,18 +241,22 @@ def checkout(request,id):
         x=int(request.POST['totalamount'])
         api_key = '8DWA22DVZO227X94'
         from_c = 'USD'
-        to_c = 'PKR'
+        to_c = 'AED'
         base_url = 'https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE'
         main_url = base_url + '&from_currency=' + from_c + '&to_currency=' + to_c + '&apikey=' + api_key
         response = requests.get(main_url)
         result = response.json()
         key = result['Realtime Currency Exchange Rate']
         rate = key['5. Exchange Rate']
+       
+    
         rate = float(rate)
         x = x / rate
-        print(x)
+       
         x = x*100
         x = int(x)
+      
+        
         
     
         charge = stripe.Charge.create(
@@ -288,9 +292,12 @@ def checkout(request,id):
             messages.success(request,"Item Payment Successfully")
             return redirect('/')
             
-            
+
+
+
+       
     try:
-        id=User_Signup.objects.get(sno=request.session['userid'])
+        UserAccount=User_Signup.objects.get(sno=request.session['userid'])
             
         quantity=request.GET['quantity']
         pquantity=float(quantity)
