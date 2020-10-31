@@ -24,5 +24,6 @@ admin.site.index_title = "Admin Panel"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('app.urls'))
+    path('', include('app.urls')),
+    path('zipeetapi/', include('zipeetapi.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
