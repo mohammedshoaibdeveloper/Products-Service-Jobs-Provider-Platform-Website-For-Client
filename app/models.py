@@ -145,6 +145,14 @@ class User_Signup(models.Model):
     Location=models.CharField(max_length=100,default="location" )
 
 
+class Ser_Signup(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = User_Signup
+        fields = '__all__'
+
+
     
 # Create your models here.
 class Contact(models.Model):
@@ -183,6 +191,30 @@ class Order(models.Model):
     
     def __str__(self):
         return self.Firstname
+
+
+class Ser_Order(serializers.ModelSerializer):
+
+    name = serializers.ReadOnlyField(source="User_Id.name")
+    phone = serializers.ReadOnlyField(source="User_Id.phone")
+    email = serializers.ReadOnlyField(source="User_Id.email")
+    content = serializers.ReadOnlyField(source="User_Id.content")
+    Company_Account_Name = serializers.ReadOnlyField(source="Company_Account_Id.Company_Account_Name")
+    Company_Account_Email = serializers.ReadOnlyField(source="Company_Account_Id.Company_Account_Email")
+    Company_Account_logo = serializers.ReadOnlyField(source="Company_Account_Id.Company_Account_logo.url")
+    Company_Account_Desc = serializers.ReadOnlyField(source="Company_Account_Id.Company_Account_Desc")
+    Company_Account_Contact = serializers.ReadOnlyField(source="Company_Account_Id.Contact")
+    Company_Adress = serializers.ReadOnlyField(source="Company_Account_Id.Company_Adress")
+    Company_Whatsapp_No = serializers.ReadOnlyField(source="Company_Account_Id.Company_Whatsapp_No")
+    Company_Location = serializers.ReadOnlyField(source="Company_Account_Id.Company_Location")
+    Product_name = serializers.ReadOnlyField(source="Product_id.name")
+    Service_Category_Name = serializers.ReadOnlyField(source="Company_Account_Id.Service_Category")
+    
+    
+
+    class Meta:
+        model = Order
+        fields = ('order_id','Ordertime','status','timestamp','update','Firstname','lastname','phoneno','emailid','address','city','district','zipcode','totalamount','Product_Quantity','User_Id','name','phone','email','content','Company_Account_Id','Company_Account_Name','Company_Account_Email','Company_Account_logo','Company_Account_Desc','Company_Account_Contact','Company_Adress','Company_Whatsapp_No','Company_Location','Service_Category_Name','Product_name')
    
    
 class User_Contatact_Service(models.Model):

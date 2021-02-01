@@ -12,7 +12,7 @@ import requests
 import json
 import stripe
 from django.db.models import Q
-from app.models import product,category,User_Signup,Contact,Order,Company_Account,Service,Job,User_Contatact_Job,User_Contatact_Service,Ser_product,Ser_service,Ser_job,Ser_account,Ser_cat
+from app.models import product,category,User_Signup,Contact,Order,Company_Account,Service,Job,User_Contatact_Job,User_Contatact_Service,Ser_product,Ser_service,Ser_job,Ser_account,Ser_cat,Ser_Signup,Ser_Order
 from zipeetapi.serializers import SerCompany_Account,DynamicSerCompany_Account
 #secrete key
 stripe.api_key='sk_test_QhSeKSq3sLTxE0VIwmsh1K9o00cU4DXYYq'
@@ -319,7 +319,7 @@ class View_Product(APIView):
 
     try:
 
-      pid = request.data.get('pid')
+      pid = request.GET['pid']
 
       products= product.objects.filter(pid=pid)
       product_data = Ser_product(products,many=True)
@@ -346,7 +346,7 @@ class View_Service(APIView):
 
     try:
 
-      sid = request.data.get('sid')
+      sid = request.GET['sid']
 
       services= Service.objects.filter(Service_id=sid)
       service_data = Ser_service(services,many=True)
@@ -374,7 +374,7 @@ class View_Job(APIView):
 
     try:
 
-      jid = request.data.get('jid')
+      jid = request.GET['jid']
 
       jobs= Job.objects.filter(Job_id=jid)
       job_data = Ser_job(jobs,many=True)
@@ -402,7 +402,8 @@ class View_Category_Data(APIView):
 
     try:
 
-      cid = request.data.get('cid')
+  
+      cid=request.GET['cid']
 
       products=product.objects.filter(category_id=cid)
       category_data = Ser_product(products,many=True)
@@ -526,21 +527,31 @@ class User_Login(APIView):
 
       email=request.data.get('email')
       password=request.data.get('password')
-      data = User_Signup.objects.get(Q(email = email) | Q(Contact_No = email))
+      data = User_Signup.objects.filter(Q(email = email) | Q(Contact_No = email))
     
       if data:
+
+          data = data[0]
           if data.password == password:
               request.session['userid']=data.sno
               request.session['is_loged'] = True
-             
-              message = {
 
-                    'status' : True,
-                    'message' : "Login SuccessFully"
-                }
-              return Response(message)
+              order_data = Order.objects.filter(User_Id = request.session['userid'])
+              if data:
+
+                order_count = order_data.count()
+                serializers = Ser_Signup(data)
+               
+                message = {
+
+                      'status' : True,
+                      'message' : "Login SuccessFully",
+                      'data':serializers.data,
+                      'order_count':order_count
+                  }
+                return Response(message)
           else:
-              messages.error(request,"Password is Incorrect")
+              
               message = {
 
                   'status' : False,
@@ -573,9 +584,9 @@ class Checkout(APIView):
 
     try:
 
-      userid = request.data.get('user_id')
-      pid = request.data.get('pid')
-      quantity=request.data.get('quantity')
+      userid = request.GET['user_id']
+      pid = request.GET['pid']
+      quantity=request.GET['quantity']
 
       UserAccount=User_Signup.objects.get(sno=userid)
       pquantity=float(quantity)
@@ -603,14 +614,14 @@ class Checkout(APIView):
       return Response(message)
 
 
-    except:
+    except Exception as e:
 
-      message = {
-
-                  'status' : False,
-                  'message' : "Please Login first before checkout"
-              }
-      return Response(message)
+            
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
         
   
   def post(self,request):
@@ -701,14 +712,13 @@ class Checkout(APIView):
               }
         return Response(message)
 
-    except:
-
-      message = {
-
-                  'status' : False,
-                  'message' : "Please Login first before checkout"
-              }
-      return Response(message)
+    except Exception as e:
+            
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
 
 
 
@@ -954,47 +964,164 @@ class Service_Search(APIView):
             return Response(data)
 
 
+class servicecontact(APIView):
+
+  def post(self,request):
+
+      
+      
+    try:
+        
+        User_Id=request.POST['userid']
+        Service_id=request.POST['Service_id']
+        userid=User_Signup.objects.get(sno=User_Id)
+        fname=request.POST['fname']
+        lname=request.POST['lname']
+        email=request.POST['email']
+        password=request.POST['password']
+        address=request.POST['address']
+        city=request.POST['city']
+        district=request.POST['district']
+        phoneno=request.POST['phoneno']
+        Whatsapp_No=request.POST['Whatsapp_No']
+        Location=request.POST['Location']
+        Desc=request.POST['Desc']
+        servicedata=Service.objects.get(Service_id=Service_id)
+        companyid=servicedata.Company_Account_Id
+        Service_id=Service.objects.get(Service_id=Service_id)
+        data=User_Contatact_Service(User_Id=userid,fname=fname,lname=lname,email=email,password=password,address=address,city=city,district=district,phoneno=phoneno,Whatsapp_No=Whatsapp_No,Location=Location,Desc=Desc,Comapnay_Id=companyid,Service_id=Service_id)
+        data.save()
+        Message={
+                'status' : True,
+                'message': "Response Recorded Successfully"
+              
+
+
+                }
+        return Response(Message)
+
+        
+
+
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
+
+
+class jobcontact(APIView):
+
+  def post(self,request):
+
+      
+      
+    try:
+        
+        User_Id=request.POST['userid']
+        Job_id=request.POST['Job_id']
+        userid=User_Signup.objects.get(sno=User_Id)
+        fname=request.POST['fname']
+        lname=request.POST['lname']
+        email=request.POST['email']
+        password=request.POST['password']
+        address=request.POST['address']
+        city=request.POST['city']
+        district=request.POST['district']
+        phoneno=request.POST['phoneno']
+        Whatsapp_No=request.POST['Whatsapp_No']
+        Location=request.POST['Location']
+        Desc=request.POST['Desc']
+        jobdata=Job.objects.get(Job_id=Job_id)
+        companyid=jobdata.Company_Account_Id
+        job_id=Job.objects.get(Job_id=Job_id)
+        data=User_Contatact_Job(User_Id=userid,fname=fname,lname=lname,email=email,password=password,address=address,city=city,district=district,phoneno=phoneno,Whatsapp_No=Whatsapp_No,Location=Location,Desc=Desc,Comapnay_Id=companyid,Job_id=job_id)
+        data.save()
+        Message={
+                'status' : True,
+                'message': "Response Recorded Successfully"
+              
+
+
+                }
+        return Response(Message)
+
+        
+
+
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
+
+
+
+
+
+
+
+
+
 
   #########################    SHakeeb APi ###############################
 
 
     ##signup company account
 class companyAccountSignup(APIView):
+
   def post(self,request):
-    Company_Account_Name=request.POST['Company_Account_Name']
-    Company_Account_Email=request.POST['Company_Account_Email']
-    password=request.POST['password']
-    Company_Account_logo=request.FILES['Company_Account_logo']
-    Company_Account_Desc=request.POST['Company_Account_Desc']
-    Contact=request.POST['Contact']
-    Company_Adress=request.POST['Company_Adress']
-    Company_Whatsapp_No=request.POST['Company_Whatsapp_No']
-    Company_Location=request.POST['Company_Location']
-    Service_Category=request.POST['Service_Category']
-    
-    checkEmailRepeat = Company_Account.objects.filter(Company_Account_Email = Company_Account_Email)
-    if checkEmailRepeat:
-      message = {
-        'status' : False,
-        'message' : "Account Already Exist"
-      }
-      return Response(message)
+
+    try:
+      Company_Account_Name=request.POST['Company_Account_Name']
+      Company_Account_Email=request.POST['Company_Account_Email']
+      password=request.POST['password']
+      # Company_Account_logo=request.FILES['Company_Account_logo']
+      Company_Account_Desc=request.POST['Company_Account_Desc']
+      Contact=request.POST['Contact']
+      Company_Adress=request.POST['Company_Adress']
+      Company_Whatsapp_No=request.POST['Company_Whatsapp_No']
+      Company_Location=request.POST['Company_Location']
+      Service_Category=request.POST['Service_Category']
+      
+      checkEmailRepeat = Company_Account.objects.filter(Company_Account_Email = Company_Account_Email)
+      if checkEmailRepeat:
+        message = {
+          'status' : False,
+          'message' : "Account Already Exist"
+        }
+        return Response(message)
 
 
-    else:
-      data=Company_Account(Company_Account_Name=Company_Account_Name,Company_Account_Email=Company_Account_Email,password=password,Company_Account_logo=Company_Account_logo,Company_Account_Desc=Company_Account_Desc,Contact=Contact,Company_Adress=Company_Adress,Company_Whatsapp_No=Company_Whatsapp_No,Company_Location=Company_Location,Service_Category=Service_Category)
-      data.save()
-      message = {
-        'status' : True,
-        'message' : "Account Create Successfully"
-      }
-      return Response(message)
+      else:
+        data=Company_Account(Company_Account_Name=Company_Account_Name,Company_Account_Email=Company_Account_Email,password=password,Company_Account_Desc=Company_Account_Desc,Contact=Contact,Company_Adress=Company_Adress,Company_Whatsapp_No=Company_Whatsapp_No,Company_Location=Company_Location,Service_Category=Service_Category)
+        data.save()
+        message = {
+          'status' : True,
+          'message' : "Account Create Successfully"
+        }
+        return Response(message)
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
 
 
 ##Login company account
 
 class companyAccountLogin(APIView):
   def post(self,request):
+
     try:
       Company_Account_Email = request.POST['Company_Account_Email']
       password = request.POST['password']
@@ -1026,42 +1153,64 @@ class companyAccountLogin(APIView):
 #AddProductCategory
 class AddProductCategory(APIView):
   def post(self,request):
-    cname=request.POST['categoryname']
-    id=request.POST['comapanyid']
-    
-    companyid=Company_Account.objects.get(Company_Account_id=id)
-    checkAuthenticate=category.objects.filter(cname = cname,Company_Account_Id=id)
-    if checkAuthenticate:
-      message = {
-      'status' : False,
-      'message' : "Category Already Exist"
-      }
-      return Response(message)
 
-       
-    else:
-        data=category(cname=cname,Company_Account_Id=companyid)
-        data.save()
+    try:
+      cname=request.POST['categoryname']
+      id=request.POST['comapanyid']
+      
+      companyid=Company_Account.objects.get(Company_Account_id=id)
+      checkAuthenticate=category.objects.filter(cname = cname,Company_Account_Id=id)
+      if checkAuthenticate:
         message = {
-          'status' : True,
-          'message' : "Category Add Successfully"
+        'status' : False,
+        'message' : "Category Already Exist"
         }
         return Response(message)
+
+         
+      else:
+          data=category(cname=cname,Company_Account_Id=companyid)
+          data.save()
+          message = {
+            'status' : True,
+            'message' : "Category Add Successfully"
+          }
+          return Response(message)
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
         
 
 ##showProductCategory
 
 class showProductCategory(APIView):
   def get(self,request):
-    id=request.GET['comapanyid']
-    categorydata = category.objects.filter(Company_Account_Id=id)
-    serCategory = Ser_cat(categorydata,many=True)
-    message = {
-          'status' : True,
-          'data' : serCategory.data
-        
-        }
-    return Response(message)
+
+    try:
+
+      id=request.GET['comapanyid']
+      categorydata = category.objects.filter(Company_Account_Id=id)
+      serCategory = Ser_cat(categorydata,many=True)
+      message = {
+            'status' : True,
+            'data' : serCategory.data
+          
+          }
+      return Response(message)
+
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
 
 
 ##Delete Category
@@ -1083,74 +1232,116 @@ class deleteCategory(APIView):
 ###AddProducts and show 
 
 class AddProducts(APIView):
+
   def post(self,request):
-    image = request.FILES['product_Image']
-    title  = request.POST['title']
-    offer  = request.POST['offer']
-    productcategory = request.POST['categoryid']
-    price = request.POST['price']
-    stock = request.POST['stock']
-    desc = request.POST['desc']
-    id = request.POST['comapanyid']
-    company_id = Company_Account.objects.get(Company_Account_id = id )
-    categoryobject = category.objects.get(cid = productcategory )
 
-    data = product(name = title,category =  categoryobject ,price = price,stock = stock,description = desc,image = image , Product_offers = offer,Company_Account_Id = company_id)
-    data.save()
+    try:
 
-    message = {
-          'status' : True,
-          'message': "Add Product Successfully"
-    
-        
-        }
-    return Response(message)
+      image = request.FILES['product_Image']
+      title  = request.POST['title']
+      offer  = request.POST['offer']
+      productcategory = request.POST['categoryid']
+      price = request.POST['price']
+      stock = request.POST['stock']
+      desc = request.POST['desc']
+      id = request.POST['comapanyid']
+      company_id = Company_Account.objects.get(Company_Account_id = id )
+      categoryobject = category.objects.get(cid = productcategory )
 
+      data = product(name = title,category =  categoryobject ,price = price,stock = stock,description = desc,image = image , Product_offers = offer,Company_Account_Id = company_id)
+      data.save()
+
+      message = {
+            'status' : True,
+            'message': "Add Product Successfully"
+      
+          
+          }
+      return Response(message)
+
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
 
   def get(self,request):
-    id = request.GET['comapanyid']
-    productData = product.objects.filter(Company_Account_Id = id).order_by('-pid')
-    if productData:
-      serProduct = Ser_product(productData,many=True)
-      message = {
-      'status' : True,
-      'data' : serProduct.data
-          
-      
-          
-          }
-      return Response(message)
 
-    else:
-      message = {
-        'status' : False,
-        'message' : "No Products is Available"
+    try:
+
+      id = request.GET['comapanyid']
+      productData = product.objects.filter(Company_Account_Id = id).order_by('-pid')
+      if productData:
+        serProduct = Ser_product(productData,many=True)
+        message = {
+        'status' : True,
+        'data' : serProduct.data
+            
+        
+            
+            }
+        return Response(message)
+
+      else:
+        message = {
+          'status' : False,
+          'message' : "No Products is Available"
+            
+        
+            
+            }
+        return Response(message)
+
+    except Exception as e:
+
           
-      
-          
+      data={
+              'status' : False,
+              'message': str(e)
           }
-      return Response(message)
+      return Response(data)
 
 
 ##Delete Product 
 class DeleteProduct(APIView):
+
   def get(self,request):
-    id = request.GET['productId']
-    productData = product.objects.get(pid = id)
-    productData.delete()
-    message = {
-        'status' : True,
-        'message' : "Delete Successfully"
+
+    try:
+
+      id = request.GET['productId']
+      productData = product.objects.get(pid = id)
+      productData.delete()
+      message = {
+          'status' : True,
+          'message' : "Delete Successfully"
+            
+        
+            
+            }
+      return Response(message)
+
+    except Exception as e:
+
           
-      
-          
+      data={
+              'status' : False,
+              'message': str(e)
           }
-    return Response(message)
+      return Response(data)
 
 
 ##Add jobs and show
 class AddJobs(APIView):
   def post(self,request):
+
+    try:
+
+
+
       image = request.FILES['image']
       jobname = request.POST['jobname']
       exp = request.POST['Experience']
@@ -1172,29 +1363,52 @@ class AddJobs(APIView):
           }
       return Response(message)
 
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
+
+
+
   def get(self,request):
-    id = request.GET['comapanyid']
-    jobdata = Job.objects.filter(Company_Account_Id = id ).order_by('-Job_id')
-    if jobdata:
-      serjob = Ser_job(jobdata,many=True)
-      message = {
-        'status' : True,
-        'data' : serjob.data
+
+    try:
+
+      id = request.GET['comapanyid']
+      jobdata = Job.objects.filter(Company_Account_Id = id ).order_by('-Job_id')
+      if jobdata:
+        serjob = Ser_job(jobdata,many=True)
+        message = {
+          'status' : True,
+          'data' : serjob.data
+            
+        
+            
+            }
+        return Response(message)
+
+      else:
+        message = {
+        'status' : False,
+        'message' : "No Jobs is Available"
           
       
           
           }
-      return Response(message)
+        return Response(message)
 
-    else:
-      message = {
-      'status' : False,
-      'message' : "No Jobs is Available"
-        
-    
-        
-        }
-      return Response(message)
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
 
 
 
@@ -1202,15 +1416,27 @@ class AddJobs(APIView):
 ##Delete job 
 class DeleteJob(APIView):
   def get(self,request):
-    id = request.GET['jobid']
-    jobdata = Job.objects.get(Job_id = id )
-    jobdata.delete()
-    message = {
-      'status' : True,
-      'message' : "Delete Job Successfully"
-        
-    }
-    return Response(message)
+
+    try:
+
+      id = request.GET['jobid']
+      jobdata = Job.objects.get(Job_id = id )
+      jobdata.delete()
+      message = {
+        'status' : True,
+        'message' : "Delete Job Successfully"
+          
+      }
+      return Response(message)
+
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
 
 
 
@@ -1218,45 +1444,69 @@ class DeleteJob(APIView):
 #show and add service
 class AddService(APIView):
   def post(self,request):
-    image = request.FILES['image']
-    servicename = request.POST['servicename']
-    email = request.POST['email']
-    contact = request.POST['contact']
-    servicecategory = request.POST['category']
-    servicedes = request.POST['desc']
-    id = request.POST['comapanyid']
 
-    company_id = Company_Account.objects.get(Company_Account_id = id )
+    try:
 
-    data = Service(Service_Name = servicename, Service_Description = servicedes,Service_Image = image, Email = email,Contact = contact,category = servicecategory,Company_Account_Id = company_id)
-    data.save()
+      image = request.FILES['image']
+      servicename = request.POST['servicename']
+      email = request.POST['email']
+      contact = request.POST['contact']
+      servicecategory = request.POST['category']
+      servicedes = request.POST['desc']
+      id = request.POST['comapanyid']
 
-    message = {
-      'status' : True,
-      'message' : "Add Service Successfully"
-        
-    }
-    return Response(message)
+      company_id = Company_Account.objects.get(Company_Account_id = id )
 
-  def get(self,request):
-    id = request.GET['comapanyid']
-    showservice = Service.objects.filter(Company_Account_Id = id ).order_by('-Service_id')
-    if showservice:
-      serService = Ser_service(showservice,many=True)
+      data = Service(Service_Name = servicename, Service_Description = servicedes,Service_Image = image, Email = email,Contact = contact,category = servicecategory,Company_Account_Id = company_id)
+      data.save()
+
       message = {
         'status' : True,
-        'data' : serService.data
+        'message' : "Add Service Successfully"
           
       }
       return Response(message)
 
-    else:
-      message = {
-        'status' : False,
-        'message' : 'No service is Available'
+    except Exception as e:
+
           
-      }
-      return Response(message)
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
+
+  def get(self,request):
+
+    try:
+
+      id = request.GET['comapanyid']
+      showservice = Service.objects.filter(Company_Account_Id = id ).order_by('-Service_id')
+      if showservice:
+        serService = Ser_service(showservice,many=True)
+        message = {
+          'status' : True,
+          'data' : serService.data
+            
+        }
+        return Response(message)
+
+      else:
+        message = {
+          'status' : False,
+          'message' : 'No service is Available'
+            
+        }
+        return Response(message)
+
+    except Exception as e:
+
+          
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
 
 
 
@@ -1264,12 +1514,188 @@ class AddService(APIView):
 ##Delete Service
 class DeleteService(APIView):
   def get(self,request):
-    id = request.GET['Service_id']
-    servicedata = Service.objects.get(Service_id = id)
-    servicedata.delete()
-    message = {
-        'status' : True,
-        'message' : 'Delete SuccessFully'
+
+    try:
+
+      id = request.GET['Service_id']
+      servicedata = Service.objects.get(Service_id = id)
+      servicedata.delete()
+      message = {
+          'status' : True,
+          'message' : 'Delete SuccessFully'
+            
+        }
+      return Response(message)
+
+    except Exception as e:
+
           
-      }
-    return Response(message)
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
+
+
+class User_CartData(APIView):
+
+  def post(self,request):
+
+    try:
+      id = request.data.get('sno')
+      data = Order.objects.filter(User_Id = id)
+      serorder = Ser_Order(data,many=True)
+
+   
+
+      message = {
+        'status' : True,
+        'Cart_Data' : serorder.data
+            }
+                  
+      return Response(message)
+
+    except Exception as e:
+
+            
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
+
+
+
+class Product_Locations(APIView):
+
+  def get(self,request):
+
+    try:
+
+      data  = product.objects.all()
+
+      countrylist = []
+
+      for i in data:
+
+          countrylist.append(i.Company_Account_Id.Company_Location.lower())
+
+      message = {
+          'status' : True,
+          'countrylist' : set(countrylist)
+              }
+                    
+      return Response(message)
+
+    except Exception as e:
+      
+            
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
+
+
+class Service_Locations(APIView):
+
+  def get(self,request):
+
+    try:
+
+      data  = Service.objects.all()
+
+      countrylist = []
+
+      for i in data:
+
+          countrylist.append(i.Company_Account_Id.Company_Location.lower())
+
+      message = {
+          'status' : True,
+          'countrylist' : set(countrylist)
+              }
+                    
+      return Response(message)
+
+    except Exception as e:
+      
+            
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
+
+
+
+class Job_Locations(APIView):
+
+  def get(self,request):
+
+    try:
+
+      data  = Job.objects.all()
+
+      countrylist = []
+
+      for i in data:
+
+          countrylist.append(i.Company_Account_Id.Company_Location.lower())
+
+      message = {
+          'status' : True,
+          'countrylist' : set(countrylist)
+              }
+                    
+      return Response(message)
+
+    except Exception as e:
+      
+            
+      data={
+              'status' : False,
+              'message': str(e)
+          }
+      return Response(data)
+
+
+
+class User_Cart_Counter(APIView):
+
+  def get(self,request):
+
+
+    try:
+
+      id = request.GET['sno']
+      order_data = Order.objects.filter(User_Id = id)
+      if order_data:
+
+        order_count = order_data.count()
+        
+       
+        message = {
+
+              'status' : True,
+              'order_count':order_count
+          }
+        return Response(message)
+      else:
+          messages.error(request,"Password is Incorrect")
+          message = {
+
+              'status' : False,
+              'order_count' : 0
+          }
+          return Response(message)
+  
+      
+
+    except Exception as e:
+            
+            data={
+                    'status' : False,
+                    'message': str(e)
+                }
+            return Response(data)

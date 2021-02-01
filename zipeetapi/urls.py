@@ -1,5 +1,5 @@
 from django.urls import path,include
-from zipeetapi.views import navBarData,Products,dailyService,monthlyService,yearlyService,recentJobs,parttimeJobs,highpaidJobs,Show_All_Products,Show_All_Services,Show_All_Jobs,View_Product,View_Service,View_Job,View_Category_Data,Customer_Contact,Products_Search,User_signUp,User_Login,Checkout,Job_Search,Service_Search,companyAccountSignup,companyAccountLogin,AddProductCategory,showProductCategory,deleteCategory,AddProducts,DeleteProduct,AddJobs,DeleteJob,AddService,DeleteService
+from zipeetapi.views import navBarData,Products,dailyService,monthlyService,yearlyService,recentJobs,parttimeJobs,highpaidJobs,Show_All_Products,Show_All_Services,Show_All_Jobs,View_Product,View_Service,View_Job,View_Category_Data,Customer_Contact,Products_Search,User_signUp,User_Login,Checkout,Job_Search,Service_Search,companyAccountSignup,companyAccountLogin,AddProductCategory,showProductCategory,deleteCategory,AddProducts,DeleteProduct,AddJobs,DeleteJob,AddService,DeleteService,servicecontact,jobcontact,User_CartData,Product_Locations,Service_Locations,Job_Locations,User_Cart_Counter
 
 urlpatterns = [
     
@@ -26,6 +26,8 @@ urlpatterns = [
     path('Checkout',Checkout.as_view()),
     path('Job_Search',Job_Search.as_view()),
     path('Service_Search',Service_Search.as_view()),
+    path('servicecontact',servicecontact.as_view()),
+    path('jobcontact',jobcontact.as_view()),
 
 
     ##shakeeb work
@@ -41,6 +43,11 @@ urlpatterns = [
     path('DeleteJob',DeleteJob.as_view()),
     path('AddService',AddService.as_view()),
     path('DeleteService',DeleteService.as_view()),
+    path('User_CartData',User_CartData.as_view()),
+    path('Product_Locations',Product_Locations.as_view()),
+    path('Service_Locations',Service_Locations.as_view()),
+    path('Job_Locations',Job_Locations.as_view()),
+    path('User_Cart_Counter',User_Cart_Counter.as_view()),
 
 
 
