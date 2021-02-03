@@ -83,13 +83,13 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME': 'ecommerce',
-        'USER': 'postgres',
-        'PASSWORD': 'shoaib',
-        'HOST': '127.0.0.1',
-        'PORT': '5433'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'NAME': 'ecommerce',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'shoaib',
+        # 'HOST': '127.0.0.1',
+        # 'PORT': '5433'
     }
 }
 # Password validation
